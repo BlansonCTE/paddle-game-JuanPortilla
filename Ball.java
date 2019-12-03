@@ -12,10 +12,14 @@ public class Ball extends JPanel {
     int width = 300, height = 400;
     
     private void moveBall() {
-        if (x > width)
+        if (x > width - 80)
             xVelocity = -1;
-        if (y > height)
+        if (y > height - 100)
             yVelocity = -1;
+        if (x < 0)
+            xVelocity = 1;
+        if (y < 0)
+            yVelocity = 1;
         //move ball
         x = x + xVelocity;
         y = y + yVelocity;
@@ -40,7 +44,7 @@ public class Ball extends JPanel {
         JFrame frame = new JFrame("Mini Tennis");
         Ball game = new Ball();
         frame.add(game);
-        frame.setSize(1400, 800);
+        frame.setSize(game.width, game.height);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
