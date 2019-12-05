@@ -37,6 +37,8 @@ public class Ball extends JPanel {
 
         //Draws the circle at new position with the same diameter
         g2d.fillOval(x, y, 60, 60);
+    
+        
     }
 
     public static void main(String[] args) throws InterruptedException {
