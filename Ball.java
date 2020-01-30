@@ -1,63 +1,45 @@
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import java.awt.Rectangle;
 
-@SuppressWarnings("serial")
-public class Ball extends JPanel {
-    //Initialize ball position
-    int x = 0, y = 0, xVelocity = 1, yVelocity = 1;
-    int width = 300, height = 400;
-    
-    private void moveBall() {
-        if (x > width - 80)
-            xVelocity = -1;
-        if (y > height - 100)
-            yVelocity = -1;
-        if (x < 0)
-            xVelocity = 1;
-        if (y < 0)
-            yVelocity = 1;
-        //move ball
-        x = x + xVelocity;
-        y = y + yVelocity;
+class Ball{
+    // initialize ball position and initial velocity
+    int x = 0, y = 0, xa = 1, ya = 1;
+    // create ball size
+    private static final int DIAMETER = 30;
+    private Game game;
+
+    public Ball(Game game) {
+        this.game = game;
     }
-
-    @Override
-    public void paint(Graphics g) {
-        //this clears the screen before reprinting circle at new position
-        super.paint(g);
-        Graphics2D g2d = (Graphics2D) g;
-
-        //Antiliasting makes the figure smoother
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_ON);
-
-        //Draws the circle at new position with the same diameter
-        g2d.fillOval(x, y, 60, 60);
-    
-        
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        //Name of the window
-        JFrame frame = new JFrame("Mini Tennis");
-        Ball game = new Ball();
-        frame.add(game);
-        frame.setSize(game.width, game.height);
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        while (true) {
-            game.moveBall();
-            game.repaint();
-
-            // tells the processor that the thread which is being
-            // run must sleep for 10 miliseconds. Bigger the number the slower
-            // the game moves
-            Thread.sleep(10); 
+    void moveBall() {
+        if (x + xa < 0)
+            xa = game.speed;
+        if (x + xa > game.getWidth() - DIAMETER)
+            xa = -game.speed;
+        if (y + ya < 0)
+            ya = game.speed;
+        if (y + ya > game.getHeight() - DIAMETER)
+            game.gameOver();
+        // COLLIDES with PADDLES
+        if (collision()) {
+            ya = -game.speed;
+            y = game.paddle.getTopY() - DIAMETER;
+            game.speed++;
         }
+
+        // move ball
+        x = x + xa;
+        y = y + ya; 
+    }
+    
+    public void paint(Graphics2D g){
+        g.fillOval(x, y, DIAMETER, DIAMETER);
+    }
+    private boolean collision(){
+        return game.paddle.getBounds().intersects(getBounds());
+    }
+
+    public Rectangle getBounds(){
+        return new Rectangle(x, y, DIAMETER, DIAMETER);
     }
 }
